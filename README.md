@@ -1,6 +1,5 @@
 - 👋 Hi, I’m @Velhens
-- 👀 I’m interested in Creating a Viruses:D
-- 📫 How to reach me Discord marn_am
+
 
 <!---
 Velhens/Velhens is a ✨ special ✨ repository because its `README.md` (this file) appears on your GitHub profile.
